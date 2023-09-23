@@ -15,8 +15,8 @@ namespace Kids_Quiz_Game
     {
         string sValue; //= AppDomain.CurrentDomain.BaseDirectory + @"\Animals\";
         private PictureBox[] pPic = new PictureBox[201];
-        private Label[] cList = new Label[18];
-        int iPick,iErr;
+        private Label[] cList = new Label[58];
+        int iPick,iErr,iMatch,iNopt,iOK;
         public string sString;
         public string sString2;
         public string sString3;
@@ -54,6 +54,22 @@ namespace Kids_Quiz_Game
             cList[6] = label8;
             cList[7] = label9;
             cList[8] = label10;
+            cList[13] = label13;
+            cList[14] = label14;
+            cList[15] = label15;
+            cList[16] = label16;
+            cList[17] = label17;
+            cList[18] = label18;
+            cList[19] = label19;
+            cList[20] = label20;
+            cList[21] = label21;
+            cList[22] = label22;
+            cList[23] = label23;
+            cList[24] = label24;
+            cList[25] = label25;
+            cList[26] = label26;
+            cList[27] = label27;
+            cList[28] = label28;
             pPic[1] = pictureBox2;
             pPic[2] = pictureBox3;
             pPic[3] = pictureBox4;
@@ -70,6 +86,16 @@ namespace Kids_Quiz_Game
             pPic[23] = pictureBox24;
             pPic[24] = pictureBox22;
             pPic[25] = pictureBox25;
+            //
+            pPic[11] = pictureBox11;
+            pPic[12] = pictureBox12;
+            pPic[13] = pictureBox13;
+            pPic[14] = pictureBox14;
+            pPic[15] = pictureBox15;
+            pPic[16] = pictureBox16;
+            pPic[17] = pictureBox17;
+            pPic[18] = pictureBox18;
+
             pRB[1] = rb01;
             pRB[2] = rb02;
             pRB[3] = rb03;
@@ -105,25 +131,80 @@ namespace Kids_Quiz_Game
             {
 
                 pPic[i].Click += pPic_Click; // Click Event
-                cList[i].Click += cList_Click; // Click Event      
+                pPic[i+10].Click += pPic_Click; // Click Event
+                cList[i].Click += cList_Click; // Click Event
+                cList[i+20].Click += cList_Click; // Click Event    
             }
             // pPic[8] = pictureBox10;
             //pPic[5] = pictureBox2;
             GetFiles();
-            MyGame();
+            iNopt = 2;
+            timer3.Interval = 10;
+            timer3.Start();
         }
 
         private void cList_Click(object sender, EventArgs e)
         {
             string sMsg;
+            int i,j;
             sMsg = Convert.ToString(((Label)sender).Text);
             speaker.SpeakAsync(sMsg);
+            sMsg = Convert.ToString(((Label)sender).Name);
+            i = sMsg.Length;
+            if (i < 7)
+                return;
+            j = Convert.ToInt32(sMsg.Substring(5, 2));
+            if (j<20)
+                return;
+            for (i = 21; i <= 28; i++)
+            {
+
+                cList[i].BackColor = Color.White;
+               
+            }
+            cList[j].BackColor =Color.PaleGreen;
+            iMatch = j;
         }
         private void pPic_Click(object sender, EventArgs e)
         {
-            string sMsg;
+            string sMsg,sMsg1;
+            int i, j;
             sMsg = Convert.ToString(((PictureBox)sender).Tag);
-            speaker.SpeakAsync(sMsg);
+            sMsg1= Convert.ToString(((PictureBox)sender).Name);
+            i = sMsg1.Length;
+            if (i < 12)
+            {
+                speaker.SpeakAsync(sMsg);
+                return;
+            }
+            j = Convert.ToInt32(sMsg1.Substring(10, 2));
+            if (j < 11 | iMatch ==0)
+                return;
+            if (String.Compare(sMsg, cList[iMatch].Text) == 0)
+            {
+                cList[iMatch].BackColor = Color.White;
+                cList[iMatch].Enabled = false;
+                cList[j+2].Text= cList[iMatch].Text;
+                speaker.SpeakAsync(sMsg);
+                iMatch = 0;
+                for (i = 21; i <= 28; i++)
+                {
+                    if (cList[i].Enabled)
+                        return;
+                }
+                iNopt = 99;
+                timer3.Start();
+            }
+               
+            else
+            {
+                cList[iMatch].BackColor = Color.Tomato;
+                timer2.Start();
+                //cList[j + 2].Text = cList[iMatch].Text;
+                //speaker.SpeakAsync(sMsg);
+                //iMatch = 0;
+            }
+
         }
         private void pRB_Click(object sender, EventArgs e)
         {
@@ -146,7 +227,7 @@ namespace Kids_Quiz_Game
             {
                 listBox2.Items.Add(k);
                 speaker.SpeakAsync(sMsg);
-
+                iOK ++;
                 for (l = k; l <= k + 3; l++)
                 {
                     listBox2.Items.Add(l + " " + k);
@@ -159,6 +240,11 @@ namespace Kids_Quiz_Game
                 }
                // pRB[i].Visible = true;
                 listBox2.Items.Add(i + " =true");
+                if (iOK==6)
+                {
+                    iNopt = 1;
+                    timer3.Start();
+                }
             }
             else
             {
@@ -176,21 +262,85 @@ namespace Kids_Quiz_Game
             int i;
             string sMsg;
             //var di = new DirectoryInfo(sValue);           
-            DirectoryInfo di = new DirectoryInfo(sValue);
-            // 
-            // Read all Jpgs
-            // 
-            // listBox1.Items.Clear();  // Clear ListBox
+            DirectoryInfo di = new DirectoryInfo(sValue);          
             var diar1 = di.GetFiles("*.jpg");
             // list the names of all files in the specified directory
             foreach (var dra in diar1)
             {
                 sMsg = dra.ToString();
                 i = sMsg.Length;
-                if (i<11 )
+                if (i<12)
                     listBox1.Items.Add(sMsg.ToUpper());
             }
             label18.Text = Convert.ToString(listBox1.Items.Count);
+        }
+        public void MyMatch()
+        {
+            int i, j, k, l;
+            string sMsg;
+            int Num;
+            Random MyRnd = new Random();
+            iErr = 0;
+            iMatch = 0;
+            iNopt = 99;
+            listBox3.Items.Clear();
+            for (i = 13; i <= 28; i++)
+            {
+                cList[i].Text = "";
+                cList[i].Tag = "";
+                cList[i].Enabled = true;
+            }
+          
+            for (l = 1; l <= 8; l++)
+            {
+                Num = MyRnd.Next(0, listBox1.Items.Count);
+                this.Text = Convert.ToString(Num);
+                label12.Text = Convert.ToString(Num);
+                j = 0;
+                k = 1;
+                while (j == 0)
+                {
+                    Num = MyRnd.Next(0, listBox1.Items.Count);
+                    iErr += 1;
+                    if (iErr > 10000)
+                        return;
+                    j = Num;
+                    //Dont Place in same spot & Insure Tile Not Used Before
+                    for (i = 21; i <= 28; i++)
+                    {
+                        sMsg = Convert.ToString(cList[i].Tag);
+                        if (String.Compare(sMsg, listBox1.Items[Num].ToString()) == 0)
+                            j = 0;
+                    }
+                    for (i = 21; i <= 28; i++)
+                    {
+                        k = i;
+                        if ((j > 0) & (String.Compare(cList[i].Text, "") == 0))
+                            break; //Skip out of this for loop           
+                    }
+                }
+                sMsg = listBox1.Items[j].ToString();
+                cList[k].Text = sMsg.Substring(0, sMsg.Length - 4);
+                cList[k].Tag = listBox1.Items[j].ToString();
+                pPic[k - 10].Image = Image.FromFile(sValue + cList[k].Tag);
+                pPic[k - 10].Tag = cList[k].Text;
+                listBox2.Items.Add(k + 19 + " " + cList[k].Text);
+                listBox3.Items.Add(cList[k].Text);
+                Num = MyRnd.Next(0, 4);
+                //pRB(1).text = "HI";
+               // pRB[Num + iOff].Text = Convert.ToString(pPic[k + 19].Tag);
+               // iOff += 4;
+            }
+            int loopTo = listBox3.Items.Count - 1;
+            for (i = 0; i <= loopTo; i++)
+            {
+                cList[i + 21].Text = listBox3.Items[i].ToString();
+                sMsg = cList[i + 21].Text;
+            }
+
+           
+
+
         }
         public void MyQuiz()
         {
@@ -199,6 +349,8 @@ namespace Kids_Quiz_Game
             int Num;
             Random MyRnd = new Random();
             iErr = 0;
+            iNopt = 1;
+            iOK = 0;
             for (i = 1; i <= 8; i++)
             {
                 cList[i].Text = "";
@@ -214,11 +366,13 @@ namespace Kids_Quiz_Game
                 pRB[i].BackColor = BRB[i];
                 pRB[i].ForeColor = fRB[i];
             }
-            listBox2.Items.Clear();
+           // listBox2.Items.Clear();
             iOff = 1;
             for (l = 1; l <= 6; l++)
             {
                 Num = MyRnd.Next(0, listBox1.Items.Count);
+                this.Text = Convert.ToString(Num);
+                label12.Text= Convert.ToString(Num);
                 j = 0;
                 k = 1;
                 while (j == 0)
@@ -300,7 +454,7 @@ namespace Kids_Quiz_Game
             for (l = 1; l<= 8; l++)
             {
                 Num = MyRnd.Next(0, listBox1.Items.Count);
-               
+                label12.Text = listBox1.Items.Count + " " + l;
                 j = 0;
                 k = 1;
                 while (j == 0)
@@ -401,9 +555,34 @@ namespace Kids_Quiz_Game
                 MyQuiz(); 
             if (tabControl1.SelectedTab == Animal)
                 MyGame();
+            if (tabControl1.SelectedTab == tabPage1)
+                MyMatch();
         }
 
         private void rb08_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void timer3_Tick(object sender, EventArgs e)
+        {
+            if (iNopt == 1)
+                MyQuiz();
+            else if (iNopt == 2)
+                MyGame();
+            else
+                MyMatch();
+            timer3.Stop();
+            timer3.Interval = 1800;
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            cList[iMatch].BackColor = Color.PaleGreen;
+            timer2.Stop();
+        }
+
+        private void tabPage1_Click(object sender, EventArgs e)
         {
 
         }

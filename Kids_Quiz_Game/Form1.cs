@@ -13,7 +13,7 @@ namespace Kids_Quiz_Game
 {
     public partial class Form1 : Form
     {
-        [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
+       [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
         private static extern IntPtr CreateRoundRectRgn
         (
             int nLeftRect,     // x-coordinate of upper-left corner
@@ -22,6 +22,8 @@ namespace Kids_Quiz_Game
             int nBottomRect,   // y-coordinate of lower-right corner
             int nWidthEllipse, // height of ellipse
             int nHeightEllipse // width of ellipse
+            //https://github.com/Billvbcode/Adv-Kids_Learning_Game-master
+            //https://github.com/zelikhan/Kids_Learning_Game
         );
         public Form1()
         {
@@ -42,14 +44,7 @@ namespace Kids_Quiz_Game
         }
 
         private void animal_Click(object sender, EventArgs e)
-        {
-            
-            //Form f = new Form5();
-            //Hide();
-            //f.sString = "Hello";
-
-           // f.Show();
-            // f.getfiles();
+        {  
             Form5 frm2 = new Form5();
             frm2.sString = "Animals";
             frm2.sString2 = "ANIMAL GAME";
